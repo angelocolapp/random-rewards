@@ -1,22 +1,21 @@
-const { Pool } = require('pg');
+import { PrismaClient } from '@prisma/client';
+//import { DateTime } from 'luxon';
 
-const pool = new Pool({
-  user: 'admin-master',
-  password: 'pLc29#d45X8@7T',
-  host: 'localhost',
-  port: 5432,
-  database: 'admin-master'
-});
+const prisma = new PrismaClient()
 
-module.exports = {
-  query: async (query, values) => {
-    const client = await pool.connect();
+//const dateOfBirth = DateTime.fromFormat('06022001', 'ddMMyyyy').toJSDate();
 
-    try {
-      const result = await client.query(query, values);
-      return result;
-    } finally {
-      client.release();
-    }
-  },
-};
+async function main(){
+  const user = await prisma.users.findMany();
+  console.log(user);
+}
+
+main()
+  .then(async ()=> {
+    await prisma.$disconnect()
+  })
+  .catch(async (e) => {
+    console.error(e)
+    await prisma.$disconnect()
+    process.exit(1)
+  })
