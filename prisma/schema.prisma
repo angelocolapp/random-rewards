@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model draws {
+  id        Int       @id @default(autoincrement())
+  drawdate  DateTime? @db.Timestamp(6)
+  status    String?   @db.VarChar(50)
+  results   String?
+  createdat DateTime? @default(now()) @db.Timestamp(6)
+  numbers   numbers[]
+}
+
+model numbers {
+  id         Int        @id @default(autoincrement())
+  purchaseid Int?
+  drawid     Int?
+  value      Int
+  drawstatus String?    @db.VarChar(50)
+  drawresult String?    @db.VarChar(50)
+  createdat  DateTime?  @default(now()) @db.Timestamp(6)
+  draws      draws?     @relation(fields: [drawid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  purchases  purchases? @relation(fields: [purchaseid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model purchases {
+  id              Int       @id @default(autoincrement())
+  userid          Int?
+  purchasedate    DateTime? @default(now()) @db.Timestamp(6)
+  numberofnumbers Int
+  totalvalue      Decimal   @db.Decimal(10, 2)
+  paymentstatus   String?   @db.VarChar(50)
+  paymentmethod   String?   @db.VarChar(50)
+  createdat       DateTime? @default(now()) @db.Timestamp(6)
+  numbers         numbers[]
+  users           users?    @relation(fields: [userid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model users {
+  id          Int         @id @default(autoincrement())
+  name        String      @db.VarChar(255)
+  email       String      @db.VarChar(255)
+  password    String      @db.VarChar(255)
+  dateofbirth DateTime    @db.Date
+  cpf         String      @db.VarChar(14)
+  phonenumber String      @db.VarChar(20)
+  createdat   DateTime?   @default(now()) @db.Timestamp(6)
+  purchases   purchases[]
+}
