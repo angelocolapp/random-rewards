@@ -1,3 +1,5 @@
+#just a test db
+
 FROM postgres:latest
 
 ENV POSTGRES_USER admin-master
