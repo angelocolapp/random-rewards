@@ -1,24 +1,26 @@
 import { Request, Response } from 'express';
 import userService from '../services/userService';
 import { users } from '@prisma/client';
+import { dateFromISOString } from '../helpers/date-format';
+import { parse, formatISO } from 'date-fns';
 
 export async function registerUser(req: Request, res: Response) {
     try {
       const { name, email, password, dateOfBirth, cpf, phoneNumber } = req.body;
   
       // Check if user with the same email or CPF already exists
+      const convertedDate = dateFromISOString(formatISO(parse(dateOfBirth, "dd/MM/yyyy", new Date())))
       const existingUser = await userService.findByEmail(email);
       const existingUserByCpf = await userService.findByCpf(cpf);
       if (existingUser || existingUserByCpf) {
         return res.status(409).json({ error: 'User with the same email or CPF already exists' });
       }
-  
       // Create user
       const newUser = await userService.createUser({
         name,
         email,
         password,
-        dateofbirth: dateOfBirth,
+        dateofbirth: convertedDate,
         cpf,
         phonenumber: phoneNumber,
       } as users); // Add type assertion here

@@ -7,21 +7,14 @@ The number system should work in two ways:
     2. The prize drawn don't have a specified limit of numbers, the numbers must be bought and distributed sequencially.
 
 System flow should be:
-
-    Ticket buyer:
-        opens the webApp, receive a list of availables raffles, choose one, see the infos about the raffle
-        he/she receive 3 packages of tickets to buy
-            1 single ticket, with the full price
-            10 tickets, 10% cheaper
-            20 tickets, 20% cheaper
-        
-        One of the packs is choosen;
-        A check-out screen is shown, so the user can register in the system, that should be integrated with Colapp Registration and Payment Method
-        The user fill their info, and a Colapp Registration is made, at the end of the registration, the user receives a qrcode to be paid with their bank application/Colapp.
-        
-        When the payment is made, the user should receive their tickets.
-
-    Raffle owner:
-        Open the webApp, and log-in their account
-            their pannel should have the options to create a new raffle and check the ones that he have created already
-
+    For raffle creators:
+        1.The user registers on the site and creates an account.
+        2.The user selects the option to create a new raffle.
+        3.The user fills in the raffle information, such as value per number, percentage reverted to the system owner, maximum number of numbers (if any), draw date or option to automatically draw when all numbers are sold.
+        4.The raffle is created and becomes available for other users to buy numbers.
+    For raffle number buyers:
+        1.The user registers on the site and creates an account.
+        2.The user browses the available raffles and chooses one to participate in.
+        3.The user fills in their personal information, such as name, phone number, date of birth, CPF, email, hometown and UF.
+        4.The user selects the number of numbers they want to buy (a single number or packages of 5/10/20 numbers) and makes the payment.
+        5.The user receives confirmation of the purchase and waits for the draw.
