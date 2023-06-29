@@ -1,52 +1,56 @@
-import { PrismaClient, users } from '@prisma/client';
+import { User } from '@prisma/client';
 import prisma from '../database/db'
 
 class UserService {
+  async findAll(userData: User){
+    return prisma.user.findMany();
+  }
+
   async findByEmail(email: string) {
-    return prisma.users.findFirst({
+    return prisma.user.findFirst({
       where: { email },
     });
   }
 
-  async findByCpf(cpf: string) {
-    return prisma.users.findFirst({
-      where: { cpf },
+  async findByDocument(document: string) {
+    return prisma.user.findFirst({
+      where: { document },
     });
   }
 
-  async findByPhone(phonenumber: string) {
-    return prisma.users.findFirst({
-      where: { phonenumber },
+  async findByPhone(phone: string) {
+    return prisma.user.findFirst({
+      where: { phone },
     });
   }
 
-  async findUserById(id: number) {
-    return prisma.users.findFirst({
-      where: { id },
+  async findUserById(userid: number) {
+    return prisma.user.findFirst({
+      where: { userid },
     });
   }
 
-  async createUser(userData: users) {
-    return prisma.users.create({
+  async createUser(userData: User) {
+    return prisma.user.create({
       data: userData,
     });
   }
 
-  async updateUser(id: number, userData: Partial<users>) {
-    return prisma.users.update({
-      where: { id },
+  async updateUser(userid: number, userData: Partial<User>) {
+    return prisma.user.update({
+      where: { userid },
       data: userData,
     });
   }
 
-  async deleteUser(id: number) {
-    return prisma.users.delete({
-      where: { id },
+  async deleteUser(userid: number) {
+    return prisma.user.delete({
+      where: { userid },
     });
   }
 
   async getAllUsers() {
-    return prisma.users.findMany();
+    return prisma.user.findMany();
   }
 };
 

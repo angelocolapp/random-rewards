@@ -7,48 +7,72 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model draws {
-  id        Int       @id @default(autoincrement())
-  drawdate  DateTime? @db.Timestamp(6)
-  status    String?   @db.VarChar(50)
-  results   String?
-  createdat DateTime? @default(now()) @db.Timestamp(6)
-  numbers   numbers[]
+// Users table
+model User {
+  userid     Int       @id @default(autoincrement())
+  name       String
+  password   String
+  document   String
+  email      String
+  phone      String
+  birthday   DateTime
+  createdat  DateTime @updatedAt
+
+  // Relation with Raffle model (one-to-many)
+  rafflesOwned   Raffle[] @relation("owner")
+  rafflesWon     Raffle[] @relation("winner")
+  numbersOwned   Number[] @relation("owner")
+  transactions   Transaction[] @relation("buyer")
+  soldTransactions Transaction[] @relation("seller") // Opposite relation for seller
 }
 
-model numbers {
-  id         Int        @id @default(autoincrement())
-  purchaseid Int?
-  drawid     Int?
-  value      Int
-  drawstatus String?    @db.VarChar(50)
-  drawresult String?    @db.VarChar(50)
-  createdat  DateTime?  @default(now()) @db.Timestamp(6)
-  draws      draws?     @relation(fields: [drawid], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  purchases  purchases? @relation(fields: [purchaseid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+// Raffles table
+model Raffle {
+  raffleId        Int       @id @default(autoincrement())
+  ownerId         Int
+  createdAt       DateTime
+  numberQuantity  Int
+  drawDate        DateTime
+  winningNumber   Int?
+  winnerId        Int?
+  prizes          String
+  title           String
+  description     String
+  quotaQuantity   Int
+  quotaValue      Int
+
+  // Relation with User model (many-to-one)
+  owner           User      @relation("owner", fields: [ownerId], references: [userid])
+  winner          User?     @relation("winner", fields: [winnerId], references: [userid])
+  numbers         Number[]  @relation("raffle")
+  transactions    Transaction[] @relation("raffle")
 }
 
-model purchases {
-  id              Int       @id @default(autoincrement())
-  userid          Int?
-  purchasedate    DateTime? @default(now()) @db.Timestamp(6)
-  numberofnumbers Int
-  totalvalue      Decimal   @db.Decimal(10, 2)
-  paymentstatus   String?   @db.VarChar(50)
-  paymentmethod   String?   @db.VarChar(50)
-  createdat       DateTime? @default(now()) @db.Timestamp(6)
-  numbers         numbers[]
-  users           users?    @relation(fields: [userid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+// Numbers table
+model Number {
+  numberId    Int      @id @default(autoincrement())
+  raffleId    Int
+  numberValue Int
+  ownerId     Int
+
+  // Relation with User model (one-to-many)
+  owner       User      @relation("owner", fields: [ownerId], references: [userid])
+  raffle      Raffle    @relation("raffle", fields: [raffleId], references: [raffleId])
 }
 
-model users {
-  id          Int         @id @default(autoincrement())
-  name        String      @db.VarChar(255)
-  email       String      @db.VarChar(255)
-  password    String      @db.VarChar(255)
-  dateofbirth DateTime    @db.Date
-  cpf         String      @db.VarChar(14)
-  phonenumber String      @db.VarChar(20)
-  createdat   DateTime?   @default(now()) @db.Timestamp(6)
-  purchases   purchases[]
+// Transactions table
+model Transaction {
+  transactionId   Int      @id @default(autoincrement())
+  value           Float
+  numbersBought   Int
+  raffleId        Int
+  transactionDate DateTime
+  status          String
+  buyerId         Int
+  sellerId        Int
+
+  // Relation with User model (many-to-one)
+  buyer           User      @relation("buyer", fields: [buyerId], references: [userid])
+  seller          User      @relation("seller", fields: [sellerId], references: [userid])
+  raffle          Raffle    @relation("raffle", fields: [raffleId], references: [raffleId])
 }
